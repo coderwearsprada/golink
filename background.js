@@ -1,47 +1,36 @@
-/*chrome.omnibox.onInputEntered.addListener(
-    function(text) {
-        alert("testing");
-        chrome.tabs.getSelected(null, function(tab)
-        {
-            var url;
-            if (text.substr(0, 3) == 'go/') {
-                url = 'https://bing.com/q/' + text;
-            // If text does not look like a URL, user probably selected the default suggestion, eg reddit.com for your example
-            } else {
-                url = text;
-            }
-            url = 'https://bing.com/q/' + text;
-            navigate(url)
-        });
-    }
- );*/
-alert("here!")
-console.log("where console is")
-
+// This event is fired each time the user updates the text in the omnibox,
+// as long as the extension's keyword mode is still active.
 chrome.omnibox.onInputChanged.addListener(
   function(text, suggest) {
+    console.log('inputChanged: ' + text);
     suggest([
-      {content: text + "/top/?sort=top&t=all", description: text + "/top/ (all time)"},//all time top posts
-      {content: text + "/controversial/?sort=top&t=all", description: text + "/controversial/ (all time)"},// controversial
-      {content: text + "/new/", description: text + "/new/"}// new posts
+      {content: text + " one", description: "the first one"},
+      {content: text + " number two", description: "the second entry"}
     ]);
   });
 
+const AWS = require('aws-sdk.js');
+const endpoint = new AWS.Endpoint("https://localhost:8000");
+const config = require('config.js');
+AWS.config.update(config.aws_local_config);
+const dynamodb = new AWS.DynamoDB.DocumentClient();
+
+// This event is fired with the user accepts the input in the omnibox.
 chrome.omnibox.onInputEntered.addListener(
   function(text) {
-
-    if (text.indexOf("/") < 1) {
-      text += "/";
+    console.log('inputEntered: ' + text);
+    alert('You just typed "' + text + '"');
+    var params = {
+        TableName: config.aws_table_name,
+        Key: {
+            'KEY_NAME': { Name: text }
+        },
+        ProjectionExpression: 'ATTRIBUTE_NAME'
     }
-    if (text.indexOf("http") < 0) {
-      text = "http://our-internal-portal/" + text;
-    }
-    alert('We are taking you to: "' + text + '"');
-    navigate(text);
-});
 
-function navigate(url) {
-  chrome.tabs.getSelected(null, function(tab) {
-    chrome.tabs.update(tab.id, {url: url});
+  /*  dynamodb.batchGetItem(params, function (err, data) {
+      if (err) console.log(err, err.stack); // an error occurred
+      else     chrome.tabs.update({url: 'https://www.apple.com'})           // successful response
+    });*/
+    chrome.tabs.update({url: 'https://www.apple.com'})
   });
-}
