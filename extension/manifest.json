@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "GoLink",
+  "version": "0.0.0.2",
+  "description": "Go to your link!",
+  "omnibox": { "keyword" : "goto" },
+  "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+      },
+  "permissions": [
+    "http://www.example.com/*"
+  ],
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": "go.png"
+  }
+}
+
