@@ -6,7 +6,7 @@
   "omnibox": { "keyword" : "goto" },
   "background": {
         "scripts": ["background.js"],
-        "persistent": false
+        "persistent": true
       },
   "permissions": [
     "http://www.example.com/*"
@@ -16,4 +16,3 @@
     "default_icon": "go.png"
   }
 }
-

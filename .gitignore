@@ -1,0 +1,32 @@
+# -*- mode: gitignore; -*-
+
+bazel-*
+preload/
+env/
+
+democa/*.config/
+
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop*
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Distribution / packaging
+
+.idea/
+build/
+logs/
+out/
+*.iml
+MANIFEST
+
+# mkdocs documentation
+
+/site
+
+# Auto-generated tag files
+tags

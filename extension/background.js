@@ -14,10 +14,28 @@ chrome.omnibox.onInputChanged.addListener(
 chrome.omnibox.onInputEntered.addListener(
   function(text) {
     alert('You just typed "' + text + '"');
-    fetch('http://www.example.com?par=0').then(r => r.text()).then(result => {
-        // Result now contains the response text, do what you want...
-        alert('respond fetched for "' + text + '"');
-    })
-    chrome.tabs.update({url: 'https://www.example.com'})
+    newurl = 'http://localhost:8080/load?short=' + text;
+    alert('newurl is ' + newurl)
+    fetch(newurl, {mode: 'cors'})
+        .then(function(response) {
+            console.log(response.headers.get('Content-Type'));
+            console.log(response.headers.get('Date'));
+            console.log(response.status);
+            console.log(response.statusText);
+            console.log(response.url);
+          if (!response.ok) {
+                console.log('there is a problem. Status Code: ' + response.status);
+                alert('problem! ' + response.status);
+                return;
+          };
+          response.json().then(function(data) {
+            alert ('actually normal');
+            console.log('link: ' + data);
+            chrome.tabs.update({url: data})
+          });
+        })
+        .catch(function(error) {
+          console.log('Looks like there was a problem: \n', error);
+        });
+    //chrome.tabs.update({url: 'https://www.example.com'})
   });
-
