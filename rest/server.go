@@ -164,6 +164,8 @@ func main() {
     http.HandleFunc("/load", load)
     http.HandleFunc("/update", updateLink)
     http.HandleFunc("/createTable", createTable)
-
+   // http.HandleFunc("/post", serve).Methods("GET")
+    staticFileHandler := http.FileServer(http.Dir("./assets/"))
+    http.Handle("/", staticFileHandler)
     http.ListenAndServe(":8080", nil)
 }
