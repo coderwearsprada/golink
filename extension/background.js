@@ -18,18 +18,11 @@ chrome.omnibox.onInputEntered.addListener(
     alert('newurl is ' + newurl)
     fetch(newurl, {mode: 'cors'})
         .then(function(response) {
-            console.log(response.headers.get('Content-Type'));
-            console.log(response.headers.get('Date'));
-            console.log(response.status);
-            console.log(response.statusText);
-            console.log(response.url);
           if (!response.ok) {
                 console.log('there is a problem. Status Code: ' + response.status);
-                alert('problem! ' + response.status);
                 return;
           };
           response.json().then(function(data) {
-            alert ('actually normal');
             console.log('link: ' + data);
             chrome.tabs.update({url: data})
           });
@@ -37,5 +30,4 @@ chrome.omnibox.onInputEntered.addListener(
         .catch(function(error) {
           console.log('Looks like there was a problem: \n', error);
         });
-    //chrome.tabs.update({url: 'https://www.example.com'})
   });

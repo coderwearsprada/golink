@@ -12,6 +12,7 @@ import (
     "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
     //"github.com/gorilla/mux"
     //"io/ioutil"
+    "strings"
 )
 
 func headers (w http.ResponseWriter, req *http.Request) {
@@ -41,6 +42,7 @@ func load (w http.ResponseWriter, req *http.Request) {
     } else {
         fmt.Println("short name is " + short)
     }
+    ///////////
     sess, _ := session.NewSession(&aws.Config{Region: aws.String("us-east-2")})
     svc := dynamodb.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
     tableName := "GoMap"
@@ -112,6 +114,25 @@ func createTable (w http.ResponseWriter, req *http.Request) {
 }
 
 func updateLink (w http.ResponseWriter, req *http.Request) {
+
+    req.ParseForm() //Parse url parameters passed, then parse the response packet for the POST body (request body)
+    fmt.Println(req.Form) // print information on server side.
+    fmt.Println("path", req.URL.Path)
+    fmt.Println("scheme", req.URL.Scheme)
+    fmt.Println(req.Form["url_long"])
+    short := ""
+    link := ""
+    for k, v := range req.Form {
+        if k == "short" {
+            short = strings.Join(v, "")
+        }
+        if k == "link" {
+            link = strings.Join(v, "")
+        }
+    }
+    fmt.Println("short:", short)
+    fmt.Println("link:", link)
+/*
     short := req.URL.Query().Get("short")
     if short == "" {
         fmt.Println("need a short name!")
@@ -126,6 +147,7 @@ func updateLink (w http.ResponseWriter, req *http.Request) {
     } else {
         fmt.Println("link is " + link)
     }
+*/
 
     sess, _ := session.NewSession(&aws.Config{Region: aws.String("us-east-2")})
     svc := dynamodb.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
