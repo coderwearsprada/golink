@@ -13,9 +13,7 @@ chrome.omnibox.onInputChanged.addListener(
 // This event is fired with the user accepts the input in the omnibox.
 chrome.omnibox.onInputEntered.addListener(
   function(text) {
-    alert('You just typed "' + text + '"');
     newurl = 'http://localhost:8080/load?short=' + text;
-    alert('newurl is ' + newurl)
     fetch(newurl, {mode: 'cors'})
         .then(function(response) {
           if (!response.ok) {
