@@ -20,7 +20,7 @@ locals {
 }
 
 resource "aws_dynamodb_table" "go_link_table" {
-    name = join(var.table_name, ["_", var.environment])
+    name = join("_", [var.table_name, var.environment])
     read_capacity = var.autoscale_read_capacity_min
     write_capacity = var.autoscale_write_capacity_min
     hash_key = var.hash_key
