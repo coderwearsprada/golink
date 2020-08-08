@@ -25,7 +25,7 @@ module "dynamodb" {
     {
       name               = "OwnerIndex"
       hash_key           = "Owner"
-      range_key          = "Owner"
+      range_key          = "Short"
       write_capacity     = 5
       read_capacity      = 5
       projection_type    = "INCLUDE"
@@ -34,7 +34,7 @@ module "dynamodb" {
     {
       name               = "LinkIndex"
       hash_key           = "Link"
-      range_key          = "Link"
+      range_key          = "Short"
       write_capacity     = 5
       read_capacity      = 5
       projection_type    = "INCLUDE"
