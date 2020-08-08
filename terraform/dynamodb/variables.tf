@@ -3,6 +3,7 @@ variable "table_name" {
     default = ""
     description = "Name of the dynamdb table"
 }
+
 variable "environment" {
   type        = string
   default     = ""
@@ -19,6 +20,15 @@ variable "tags" {
   type        = map(string)
   default     = {}
   description = "Additional tags (e.g. `map('BusinessUnit','XYZ')`"
+}
+
+variable "attributes" {
+  type = list(object({
+    name = string
+    type = string
+  }))
+  default     = []
+  description = " DynamoDB attributes as a list of mapped values"
 }
 
 variable "autoscale_write_target" {
@@ -114,4 +124,29 @@ variable "enable_autoscaler" {
   type        = bool
   default     = false
   description = "Enable or disable DynamoDB autoscaling"
+}
+
+variable "global_secondary_index_map" {
+  type = list(object({
+    hash_key           = string
+    name               = string
+    non_key_attributes = list(string)
+    projection_type    = string
+    range_key          = string
+    read_capacity      = number
+    write_capacity     = number
+  }))
+  default     = []
+  description = "Additional global secondary indexes in the form of a list of mapped values"
+}
+
+variable "local_secondary_index_map" {
+  type = list(object({
+    name               = string
+    non_key_attributes = list(string)
+    projection_type    = string
+    range_key          = string
+  }))
+  default     = []
+  description = "Additional local secondary indexes in the form of a list of mapped values"
 }
