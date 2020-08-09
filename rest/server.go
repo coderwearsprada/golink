@@ -22,14 +22,23 @@ func headers (w http.ResponseWriter, req *http.Request) {
 }
 
 type Item struct {
-    Name   string
+    Short  string
     Link   string
+    Owner  string
 }
 
 type response struct {
     status  string
     link   string
 }
+
+var sess = session.Must(session.NewSessionWithOptions(session.Options{
+        SharedConfigState: session.SharedConfigEnable,
+    }))
+// Create DynamoDB client
+var svc = dynamodb.New(sess)
+
+var tablename = "go_link_dev"
 
 func load (w http.ResponseWriter, req *http.Request) {
     fmt.Println("GET params were:", req.URL.Query())
@@ -41,14 +50,11 @@ func load (w http.ResponseWriter, req *http.Request) {
         fmt.Println("short name is " + short)
     }
     ///////////
-    sess, _ := session.NewSession(&aws.Config{Region: aws.String("us-east-2")})
-    svc := dynamodb.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
-    tableName := "GoMap"
 
     result, err := svc.GetItem(&dynamodb.GetItemInput{
         TableName: aws.String(tableName),
         Key: map[string]*dynamodb.AttributeValue{
-            "Name": {
+            "Short": {
                 S: aws.String(short),
             },
         },
@@ -66,11 +72,11 @@ func load (w http.ResponseWriter, req *http.Request) {
         return
     }
 
-    if item.Name == "" {
+    if item.Short == "" {
         fmt.Println("Could not find " + short)
         return
     }
-    fmt.Println("Successfully found " + item.Name + " pointing to " + item.Link)
+    fmt.Println("Successfully found " + item.Short + " pointing to " + item.Link)
 
     w.Header().Set("Content-Type", "application/json")
     w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -79,9 +85,6 @@ func load (w http.ResponseWriter, req *http.Request) {
 }
 
 func createTable (w http.ResponseWriter, req *http.Request) {
-    sess, _ := session.NewSession(&aws.Config{Region: aws.String("us-east-2")})
-    svc := dynamodb.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
-    tableName := "GoMap"
     input := &dynamodb.CreateTableInput{
         AttributeDefinitions: []*dynamodb.AttributeDefinition{
             {
@@ -128,29 +131,12 @@ func updateLink (w http.ResponseWriter, req *http.Request) {
             link = strings.Join(v, "")
         }
     }
+
+    // Log
     fmt.Println("short:", short)
     fmt.Println("link:", link)
-/*
-    short := req.URL.Query().Get("short")
-    if short == "" {
-        fmt.Println("need a short name!")
-        return
-    } else {
-        fmt.Println("short name is " + short)
-    }
-    link := req.URL.Query().Get("link")
-    if link == "" {
-        fmt.Println("need a link!")
-        return
-    } else {
-        fmt.Println("link is " + link)
-    }
-*/
-
-    sess, _ := session.NewSession(&aws.Config{Region: aws.String("us-east-2")})
-    svc := dynamodb.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
-    tableName := "GoMap"
     fmt.Println("Updating " + short + " to point to " + link)
+
     input := &dynamodb.UpdateItemInput{
         ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
             ":r": {
@@ -159,7 +145,7 @@ func updateLink (w http.ResponseWriter, req *http.Request) {
         },
         TableName: aws.String(tableName),
         Key: map[string]*dynamodb.AttributeValue{
-            "Name": {
+            "Short": {
                 S: aws.String(short),
             },
         },
@@ -184,8 +170,6 @@ func main() {
     http.HandleFunc("/load", load)
     http.HandleFunc("/update", updateLink)
     http.HandleFunc("/createTable", createTable)
-   // http.HandleFunc("/post", serve).Methods("GET")
-    staticFileHandler := http.FileServer(http.Dir("./assets/"))
-    http.Handle("/", staticFileHandler)
+    http.Handle("/", http.FileServer(http.Dir("./assets/")))
     http.ListenAndServe(":8080", nil)
 }
