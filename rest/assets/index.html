@@ -1,29 +1,158 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
-
 <head>
- <title>The Goto Link Encyclopedia</title>
+    <title>HTML FlexBox Template - Two columns fixed, right extra stuff</title>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+    <meta name="description" content="Use this HTML basic website two columns fixed layout template with the shorter navigation menu on the left column, and the main content and the extra stuff on the right.">
+    <meta name="generator" content="HAPedit 3.1">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="HTML FlexBox Template - Two columns fixed, right extra stuff" />
+    <meta property="og:description" content="Use this HTML basic website two columns fixed layout template with the shorter navigation menu on the left column, and the main content and the extra stuff on the right." />
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            color: #292929;
+            font: 90% Roboto, Arial, sans-serif;
+            font-weight: 300;
+        }
+
+        p {
+            padding: 0 10px;
+            line-height: 1.8;
+        }
+
+        ul li {
+            padding-right: 10px;
+            line-height: 1.6;
+        }
+
+        h3 {
+            padding: 5px 20px;
+            margin: 0;
+        }
+
+        div#header {
+            position: relative;
+        }
+
+        div#header h1 {
+            height: 80px;
+            line-height: 80px;
+            margin: 0;
+            padding-left: 10px;
+            background: #e0e0e0;
+            color: #292929;
+        }
+
+        div#header a {
+            position: absolute;
+            right: 0;
+            top: 23px;
+            padding: 10px;
+            color: #006;
+        }
+
+        div#navigation li {
+            list-style: none;
+        }
+
+        div#extra {
+            background: #85C1E9;
+        }
+
+        div#footer {
+            background: #2874A6;
+            color: #fff;
+        }
+
+        div#footer p {
+            padding: 20px 10px;
+        }
+
+        div#container {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        div#content {
+            float: center;
+            width: 100%;
+        }
+
+        div#extra {
+            float: right;
+            width: 100%;
+        }
+
+        div#footer {
+            clear: both;
+            width: 100%;
+        }
+    </style>
+    <script src="js/jquery-latest.js"></script>
+    <script>
+    $(document).ready(function(){
+    $.ajax({
+            "url" : "http://localhost:8080/get-mine",
+            "type" : "GET",
+            "success" : function(list) {
+                    var linkList = JSON.stringify(list);
+                    $("#projectInfo").text(linkList.links);
+            },
+            "error" : function(response,error)
+            {
+                console.log("ERROR: "+JSON.stringify(response));
+            }
+        });
+    });
+    </script>
 </head>
-
 <body>
-  <h1>The Goto Link Encyclopedia</h1>
-  <!--
-    This section contains the form, that will be used to hit the
-    `POST /update` API that submits the content of the form
-   -->
-  <iframe name="hiddenframe" id="dummyframe" style="display: none;"></iframe>
+<div id="container">
+    <div id="header">
+        <h1>Header</h1>
+    </div>
+    <div id="wrapper">
+       <h1>The Goto Link Encyclopedia</h1>
+      <!--
+        This section contains the form, that will be used to hit the
+        `POST /update` API that submits the content of the form
+       -->
+      <iframe name="hiddenframe" id="dummyframe" style="display: none;"></iframe>
 
-  <form action="/update" method="post" target="hiddenframe">
-    <div>
-      <label for="short">short name</label> <br>
-      <input type = "text" name="short" id="short" value="example", size="42">
+      <form action="/update" method="post" target="hiddenframe">
+        <div>
+          <label for="short">Give your link a short name</label> <br>
+          <input type = "text" name="short" id="short" value="example", size="42">
+        </div>
+          <p></p><p></p>
+        <div>
+          <label for="link">Link URL</label> <br>
+          <input type = "text" name="link" id="link" value="http://example.com", size="300">
+        </div>
+          <p></p><p></p>
+        <div>
+          <button>Submit Update</button>
+        </div>
+          <p></p>
+      </form>
     </div>
-    <div>
-      <label for="link">target link</label> <br>
-      <input type = "text" name="link" id="link" value="http://example.com", size="300">
+    <div id="extra">
+        <h2>My Links</h2>
+        <h3 id="projectInfo"></h3>
+        <ul>
+            <li>How to use CSS Flexbox to build modern layouts</li>
+            <li>How to align items both vertically and horizontally</li>
+            <li>How to order items within container</li>
+            <li>And more</li>
+        </ul>
     </div>
-    <div>
-      <button>Submit Update</button>
+    <div id="footer"><p>Footer</p>
     </div>
-  </form>
+</div>
 </body>
+</html>

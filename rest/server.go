@@ -38,7 +38,7 @@ var sess = session.Must(session.NewSessionWithOptions(session.Options{
 // Create DynamoDB client
 var svc = dynamodb.New(sess)
 
-var tablename = "go_link_dev"
+var tableName = "go_link_dev"
 
 func load (w http.ResponseWriter, req *http.Request) {
     fmt.Println("GET params were:", req.URL.Query())
@@ -49,7 +49,6 @@ func load (w http.ResponseWriter, req *http.Request) {
     } else {
         fmt.Println("short name is " + short)
     }
-    ///////////
 
     result, err := svc.GetItem(&dynamodb.GetItemInput{
         TableName: aws.String(tableName),
@@ -74,6 +73,42 @@ func load (w http.ResponseWriter, req *http.Request) {
 
     if item.Short == "" {
         fmt.Println("Could not find " + short)
+        return
+    }
+    fmt.Println("Successfully found " + item.Short + " pointing to " + item.Link)
+
+    w.Header().Set("Content-Type", "application/json")
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(item.Link)
+}
+
+func getMine (w http.ResponseWriter, req *http.Request) {
+    fmt.Println("GET params were:", req.URL.Query())
+
+    result, err := svc.GetItem(&dynamodb.GetItemInput{
+        TableName: aws.String(tableName),
+        Key: map[string]*dynamodb.AttributeValue{
+            "Owner": {
+                S: aws.String("zhanyun"),
+            },
+        },
+    })
+    if err != nil {
+        fmt.Println(err.Error())
+        return
+    }
+
+    item := Item{}
+    err = dynamodbattribute.UnmarshalMap(result.Item, &item)
+
+    if err != nil {
+        panic(fmt.Sprintf("Failed to unmarshal Record, %v", err))
+        return
+    }
+
+    if item.Short == "" {
+        fmt.Println("Could not find any")
         return
     }
     fmt.Println("Successfully found " + item.Short + " pointing to " + item.Link)
@@ -170,6 +205,7 @@ func main() {
     http.HandleFunc("/load", load)
     http.HandleFunc("/update", updateLink)
     http.HandleFunc("/createTable", createTable)
+    http.HandleFunc("/get-mine", getMine)
     http.Handle("/", http.FileServer(http.Dir("./assets/")))
     http.ListenAndServe(":8080", nil)
 }
