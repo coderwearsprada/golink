@@ -10,6 +10,9 @@ import (
     "github.com/aws/aws-sdk-go/aws/session"
     "github.com/aws/aws-sdk-go/service/dynamodb"
     "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+    "log"
+//    "golang.org/x/crypto/acme/autocert"
+//   "golang.org/x/net/http2"
     "strings"
 )
 
@@ -207,5 +210,8 @@ func main() {
     http.HandleFunc("/createTable", createTable)
     http.HandleFunc("/get-mine", getMine)
     http.Handle("/", http.FileServer(http.Dir("./assets/")))
-    http.ListenAndServe(":8080", nil)
+    err := http.ListenAndServeTLS(":8080", "server.crt", "server.key", nil)
+    if err != nil {
+        log.Fatal("ListenAndServeTLS: ", err)
+    }
 }

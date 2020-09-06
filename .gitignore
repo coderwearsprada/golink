@@ -17,7 +17,7 @@ tramp
 
 # Distribution / packaging
 
-.idea/
+.idea*
 build/
 logs/
 out/
